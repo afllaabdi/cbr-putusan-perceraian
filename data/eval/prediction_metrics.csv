@@ -1,0 +1,2 @@
+metric,accuracy,precision_weighted,recall_weighted,f1_weighted,support,evaluation_mode
+Classification (Weighted),1.0,1.0,1.0,1.0,10,Authentic
