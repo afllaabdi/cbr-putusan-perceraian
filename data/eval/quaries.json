@@ -1,0 +1,42 @@
+[
+    {
+        "query_id": 1,
+        "query": "suami tidak memberikan nafkah kepada istri"
+    },
+    {
+        "query_id": 2,
+        "query": "terjadi perselisihan dan pertengkaran terus menerus"
+    },
+    {
+        "query_id": 3,
+        "query": "suami meninggalkan rumah dan tidak memberi kabar"
+    },
+    {
+        "query_id": 4,
+        "query": "hubungan rumah tangga tidak harmonis"
+    },
+    {
+        "query_id": 5,
+        "query": "suami memiliki hubungan dengan perempuan lain"
+    },
+    {
+        "query_id": 6,
+        "query": "pasangan telah pisah tempat tinggal"
+    },
+    {
+        "query_id": 7,
+        "query": "terjadi kekerasan dalam rumah tangga"
+    },
+    {
+        "query_id": 8,
+        "query": "suami tidak bertanggung jawab terhadap keluarga"
+    },
+    {
+        "query_id": 9,
+        "query": "permohonan cerai talak karena konflik keluarga"
+    },
+    {
+        "query_id": 10,
+        "query": "istri mengajukan gugatan cerai karena nafkah kurang"
+    }
+]

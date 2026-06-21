@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import re
 import os
 import joblib
@@ -6,9 +7,10 @@ import nltk
 
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
 
 # =====================================
-# DOWNLOAD STOPWORDS (sekali saja)
+# DOWNLOAD STOPWORDS
 # =====================================
 
 nltk.download('stopwords')
@@ -19,13 +21,54 @@ nltk.download('stopwords')
 
 df = pd.read_csv("data/processed/cases.csv")
 
+print("=" * 50)
+print("DATASET")
+print("=" * 50)
+print(f"Jumlah Data Total : {len(df)}")
+
 # =====================================
-# STOPWORDS INDONESIA
+# TRAIN TEST SPLIT
+# =====================================
+
+train_df, test_df = train_test_split(
+    df,
+    test_size=0.2,
+    random_state=42,
+    shuffle=True
+)
+
+print(f"Jumlah Data Train : {len(train_df)}")
+print(f"Jumlah Data Test  : {len(test_df)}")
+
+# =====================================
+# BUAT FOLDER
+# =====================================
+
+os.makedirs("data/split", exist_ok=True)
+os.makedirs("models", exist_ok=True)
+
+# =====================================
+# SIMPAN TRAIN TEST
+# =====================================
+
+train_df.to_csv(
+    "data/split/train.csv",
+    index=False,
+    encoding="utf-8-sig"
+)
+
+test_df.to_csv(
+    "data/split/test.csv",
+    index=False,
+    encoding="utf-8-sig"
+)
+
+# =====================================
+# STOPWORDS
 # =====================================
 
 indo_stopwords = stopwords.words("indonesian")
 
-# Tambahan kata yang sering muncul di putusan
 custom_stopwords = [
     "pemohon",
     "termohon",
@@ -50,7 +93,7 @@ custom_stopwords = [
     "huruf",
     "ayat",
     "rupiah",
-    "rp",
+    "rp"
 ]
 
 all_stopwords = indo_stopwords + custom_stopwords
@@ -81,10 +124,20 @@ def preprocess_text(text):
     return text.strip()
 
 # =====================================
-# PILIH TEKS
+# PREPROCESS TRAIN DAN TEST
 # =====================================
 
-texts = df["text_full"].fillna("").apply(preprocess_text)
+texts_train = (
+    train_df["text_full"]
+    .fillna("")
+    .apply(preprocess_text)
+)
+
+texts_test = (
+    test_df["text_full"]
+    .fillna("")
+    .apply(preprocess_text)
+)
 
 # =====================================
 # TF-IDF
@@ -98,24 +151,24 @@ vectorizer = TfidfVectorizer(
     max_df=0.90
 )
 
-tfidf_matrix = vectorizer.fit_transform(texts)
+tfidf_matrix_train = vectorizer.fit_transform(texts_train)
+
+tfidf_matrix_test = vectorizer.transform(texts_test)
 
 # =====================================
-# INFO
+# INFO HASIL
 # =====================================
 
-print("=" * 50)
+print("\n" + "=" * 50)
 print("HASIL TF-IDF")
 print("=" * 50)
 
-print("Jumlah Dokumen :", tfidf_matrix.shape[0])
-print("Jumlah Fitur   :", tfidf_matrix.shape[1])
+print("Shape Train :", tfidf_matrix_train.shape)
+print("Shape Test  :", tfidf_matrix_test.shape)
 
 # =====================================
-# SIMPAN
+# SIMPAN MODEL
 # =====================================
-
-os.makedirs("models", exist_ok=True)
 
 joblib.dump(
     vectorizer,
@@ -123,8 +176,28 @@ joblib.dump(
 )
 
 joblib.dump(
-    tfidf_matrix,
-    "models/tfidf_matrix.pkl"
+    tfidf_matrix_train,
+    "models/tfidf_matrix_train.pkl"
 )
 
-print("\nTF-IDF berhasil disimpan")
+joblib.dump(
+    tfidf_matrix_test,
+    "models/tfidf_matrix_test.pkl"
+)
+
+print("\nModel berhasil disimpan")
+
+# =====================================
+# CEK FITUR
+# =====================================
+
+features = vectorizer.get_feature_names_out()
+
+print("\nJumlah fitur:", len(features))
+
+print("\n20 fitur pertama:")
+
+for feature in features[:20]:
+    print(feature)
+
+print("\nSelesai.")
