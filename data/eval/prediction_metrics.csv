@@ -1,0 +1,2 @@
+model_name,accuracy,precision_weighted,recall_weighted,f1_weighted,support,evaluation_mode
+baseline,1.0,1.0,1.0,1.0,10,Authentic
